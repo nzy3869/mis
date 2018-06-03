@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop 
+		http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/jdbc 
+		http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+		http://www.springframework.org/schema/mvc 
+		http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://mybatis.org/schema/mybatis-spring 
+		http://mybatis.org/schema/mybatis-spring.xsd
+		http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx.xsd
+		">
+ 
+	 
+	<context:component-scan base-package="cn.wbull.sys.service"></context:component-scan>
+	<!-- 加载配置文件 -->
+	<context:property-placeholder location="classpath:db.properties" />
+
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
+		destroy-method="close">
+		<!-- 数据库基本信息配置 -->
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		<property name="driverClassName" value="${jdbc.driver}" />
+		<property name="filters" value="stat" />
+		<!-- 最大并发连接数 -->
+		<property name="maxActive" value="20" />
+		<!-- 初始化连接数量 -->
+		<property name="initialSize" value="5" />
+		<!-- 配置获取连接等待超时的时间 -->
+		<property name="maxWait" value="60000" />
+		<!-- 最小空闲连接数 -->
+		<property name="minIdle" value="10" />
+		<!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+		<property name="timeBetweenEvictionRunsMillis" value="60000" />
+		<!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+		<property name="minEvictableIdleTimeMillis" value="300000" />
+		<property name="validationQuery" value="SELECT 'x'" />
+		<property name="testWhileIdle" value="true" />
+		<property name="testOnBorrow" value="false" />
+		<property name="testOnReturn" value="false" />
+		<property name="maxOpenPreparedStatements" value="20" />
+		<!-- 打开 removeAbandoned 功能 -->
+		<property name="removeAbandoned" value="true" />
+		<!-- 1800 秒，也就是 30 分钟 -->
+		<property name="removeAbandonedTimeout" value="1800" />
+		<!-- 关闭 abanded 连接时输出错误日志 -->
+		<property name="logAbandoned" value="true" />
+	</bean>
+
+	<!-- 事务管理器 -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	<!-- 使用annotation注解方式配置事务 -->  
+    <tx:annotation-driven transaction-manager="transactionManager"/>  
+    
+		<!-- mapper配置 -->
+	<!-- 让spring管理sqlsessionfactory 使用mybatis和spring整合包中的 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!-- 数据库连接池 -->
+		<property name="dataSource" ref="dataSource" />
+		<!-- spring和MyBatis完美整合，不需要mybatis的配置映射文件 -->  
+		<property name="plugins">  
+	        <array>  
+	            <bean class="com.github.pagehelper.PageInterceptor">  
+	                <property name="properties">  
+	                    <!--使用下面的方式配置参数，一行配置一个 -->  
+	                    <value>  
+	                        offsetAsPageNum=true  
+	                        rowBoundsWithCount=true  
+	                        pageSizeZero=true  
+	                        reasonable=true  
+	                    </value>  
+	                </property>  
+	            </bean>  
+	        </array>  
+    	</property>
+		<!-- 加载mybatis的全局配置文件 -->
+	  	<!-- <property name="configLocation" value="classpath*:SqlMapConfig.xml" />   -->
+		<!-- <property name="mapperLocations">  
+            <list>  
+                <value>classpath:cn/wbull/sys/dao/*.xml</value>  
+            </list>  
+        </property>  --> 
+	</bean>
+	
+	
+	<!-- 配置Mapper扫描器 --> 
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="cn.wbull.sys.dao"/>
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>  
+	</bean>
+	
+<!-- 扫描包中的接口自动引入mapper类 -->
+		<mybatis-spring:scan base-package="cn.wbull.sys.dao" />
+	
+	
+	
+</beans>

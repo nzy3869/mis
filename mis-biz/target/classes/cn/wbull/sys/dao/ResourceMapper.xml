@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.wbull.sys.dao.ResourceMapper" >
+  <resultMap id="BaseResultMap" type="cn.wbull.sys.model.Resource" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="reid" property="reid" jdbcType="VARCHAR" />
+    <result column="rename" property="rename" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="enabled" property="enabled" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="pid" property="pid" jdbcType="INTEGER" />
+    <result column="revalue" property="revalue" jdbcType="VARCHAR" />
+    <result column="leaf" property="leaf" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, reid, rename, type, enabled, remark, pid, revalue, leaf
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="cn.wbull.sys.model.ResourceExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from t_s_resource
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_s_resource
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_s_resource
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="cn.wbull.sys.model.ResourceExample" >
+    delete from t_s_resource
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="cn.wbull.sys.model.Resource" >
+    insert into t_s_resource (id, reid, rename, 
+      type, enabled, remark, 
+      pid, revalue, leaf)
+    values (#{id,jdbcType=INTEGER}, #{reid,jdbcType=VARCHAR}, #{rename,jdbcType=VARCHAR}, 
+      #{type,jdbcType=VARCHAR}, #{enabled,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, 
+      #{pid,jdbcType=INTEGER}, #{revalue,jdbcType=VARCHAR}, #{leaf,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="cn.wbull.sys.model.Resource" >
+    insert into t_s_resource
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="reid != null" >
+        reid,
+      </if>
+      <if test="rename != null" >
+        rename,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="enabled != null" >
+        enabled,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="pid != null" >
+        pid,
+      </if>
+      <if test="revalue != null" >
+        revalue,
+      </if>
+      <if test="leaf != null" >
+        leaf,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="reid != null" >
+        #{reid,jdbcType=VARCHAR},
+      </if>
+      <if test="rename != null" >
+        #{rename,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="enabled != null" >
+        #{enabled,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="pid != null" >
+        #{pid,jdbcType=INTEGER},
+      </if>
+      <if test="revalue != null" >
+        #{revalue,jdbcType=VARCHAR},
+      </if>
+      <if test="leaf != null" >
+        #{leaf,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="cn.wbull.sys.model.ResourceExample" resultType="java.lang.Integer" >
+    select count(*) from t_s_resource
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update t_s_resource
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.reid != null" >
+        reid = #{record.reid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.rename != null" >
+        rename = #{record.rename,jdbcType=VARCHAR},
+      </if>
+      <if test="record.type != null" >
+        type = #{record.type,jdbcType=VARCHAR},
+      </if>
+      <if test="record.enabled != null" >
+        enabled = #{record.enabled,jdbcType=VARCHAR},
+      </if>
+      <if test="record.remark != null" >
+        remark = #{record.remark,jdbcType=VARCHAR},
+      </if>
+      <if test="record.pid != null" >
+        pid = #{record.pid,jdbcType=INTEGER},
+      </if>
+      <if test="record.revalue != null" >
+        revalue = #{record.revalue,jdbcType=VARCHAR},
+      </if>
+      <if test="record.leaf != null" >
+        leaf = #{record.leaf,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update t_s_resource
+    set id = #{record.id,jdbcType=INTEGER},
+      reid = #{record.reid,jdbcType=VARCHAR},
+      rename = #{record.rename,jdbcType=VARCHAR},
+      type = #{record.type,jdbcType=VARCHAR},
+      enabled = #{record.enabled,jdbcType=VARCHAR},
+      remark = #{record.remark,jdbcType=VARCHAR},
+      pid = #{record.pid,jdbcType=INTEGER},
+      revalue = #{record.revalue,jdbcType=VARCHAR},
+      leaf = #{record.leaf,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="cn.wbull.sys.model.Resource" >
+    update t_s_resource
+    <set >
+      <if test="reid != null" >
+        reid = #{reid,jdbcType=VARCHAR},
+      </if>
+      <if test="rename != null" >
+        rename = #{rename,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="enabled != null" >
+        enabled = #{enabled,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="pid != null" >
+        pid = #{pid,jdbcType=INTEGER},
+      </if>
+      <if test="revalue != null" >
+        revalue = #{revalue,jdbcType=VARCHAR},
+      </if>
+      <if test="leaf != null" >
+        leaf = #{leaf,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="cn.wbull.sys.model.Resource" >
+    update t_s_resource
+    set reid = #{reid,jdbcType=VARCHAR},
+      rename = #{rename,jdbcType=VARCHAR},
+      type = #{type,jdbcType=VARCHAR},
+      enabled = #{enabled,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      pid = #{pid,jdbcType=INTEGER},
+      revalue = #{revalue,jdbcType=VARCHAR},
+      leaf = #{leaf,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
