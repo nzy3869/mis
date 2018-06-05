@@ -66,4 +66,10 @@ public class UserController {
 		return p;
 	}
 	
+	@RequestMapping("/addUser")
+	public String addUser(User user) {
+		System.out.println(user);
+		return null;
+	}
+	
 }
