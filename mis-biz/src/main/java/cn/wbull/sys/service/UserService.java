@@ -57,4 +57,10 @@ public interface UserService {
 	 * @return
 	 */
 	List<User> getUserBySearch(String params);
+	/**
+	 *根据id删除用户
+	 * @param id
+	 * @return
+	 */
+	int delUser(int id);
 }

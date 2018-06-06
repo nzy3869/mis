@@ -1,5 +1,7 @@
 package cn.wbull.sys.controller;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +58,11 @@ public class UserController {
 	public String toUserManage() {
 		return "system/UserPage";
 	}
-	
+	/**
+	 * 搜索数据
+	 * @param params
+	 * @return
+	 */
 	@RequestMapping("/search")
 	@ResponseBody
 	public PageUtil<List<User>> getUserBySearch(@RequestParam("search") String params){
@@ -65,10 +71,45 @@ public class UserController {
 		p.setRows(searchUser);
 		return p;
 	}
-	
+	/**
+	 * 添加用户
+	 * @param user
+	 * @return
+	 */
 	@RequestMapping("/addUser")
-	public String addUser(User user) {
-		System.out.println(user);
+	@ResponseBody
+	public String addUser(@RequestBody User user) {
+		user.setCreateDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+		int result = userService.addUser(user);
+		if(result==0) {
+			return "error";
+		}
+		
+		return "success";
+	}
+	
+	/**
+	 * 根据id删除用户
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping("/delUser")
+	@ResponseBody
+	public String delUser(@RequestParam("id") int id) {
+		int result = userService.delUser(id);
+		if(result==0) {
+			return "error";
+		}
+		
+		return "success";
+	}
+	@RequestMapping("/delMultUser")
+	@ResponseBody
+	public String delMultUser(@RequestBody int[] ids) {
+		
+		for (int i : ids) {
+			System.out.println(i);
+		}
 		return null;
 	}
 	

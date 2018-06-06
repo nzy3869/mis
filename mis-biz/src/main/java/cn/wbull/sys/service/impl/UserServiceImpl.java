@@ -1,6 +1,5 @@
 package cn.wbull.sys.service.impl;
 
-import java.security.spec.ECField;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +9,6 @@ import cn.wbull.sys.dao.UserMapper;
 import cn.wbull.sys.model.Role;
 import cn.wbull.sys.model.User;
 import cn.wbull.sys.model.UserExample;
-import cn.wbull.sys.model.UserExample.Criteria;
 import cn.wbull.sys.service.UserService;
 @Service
 public class UserServiceImpl implements UserService {
@@ -55,8 +53,8 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public int addUser(User user) {
-		// TODO Auto-generated method stub
-		return 0;
+		
+		return userMapper.insert(user);
 	}
 
 	@Override
@@ -73,6 +71,11 @@ public class UserServiceImpl implements UserService {
 		example.or().andUidLike("%"+params+"%");
 		example.or().andUnameLike("%"+params+"%");
 		return userMapper.selectByExample(example);
+	}
+
+	@Override
+	public int delUser(int id) {
+		return userMapper.deleteByPrimaryKey(id);
 	}
 
 }

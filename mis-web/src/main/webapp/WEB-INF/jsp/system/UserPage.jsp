@@ -29,11 +29,11 @@
 	<!-- 工具容器 -->
 	<div id="toolbar" class="btn-group" style="margin-left: 10px;">
 		<button id="btn_add" type="button" class="btn btn-default"
-			data-toggle="modal" data-target="#myModal" onclick="addVideoShow();">
+			data-toggle="modal" data-target="#myModal" ">
 			<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
 		</button>
 		<button id="btn_delete" type="button" class="btn btn-default"
-			onclick="delMemberVideo();">
+			onclick="delMultUsers();">
 			<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>选择删除
 		</button>
 	</div>
@@ -123,11 +123,83 @@
 	</div>
 </body>
 <script type="text/javascript">
-
-	function addUser(){
-		document.getElementById("addUserForm").submit();
+	//批量删除用户
+	function delMultUsers(){
+		var ids = [];
+		//获取选中的元素
+		var cks = $("#table").bootstrapTable('getSelections',function(rows){
+			return rows.id;
+		});
+		//遍历元素并取出id
+		for(j in cks) {
+			 ids.push(cks[j].id);
+		}
+		console.log(ids);
+		$.ajax({  
+            type : "POST",  
+            url : "${pageContext.request.contextPath}/user/delMultUser.do",  
+            data : {
+            	ids:JSON.stringify(ids), 
+            },
+            dataType : "json",  
+            success:function(msg) {  
+                alert(msg);
+            },
+            error:function(){
+            	alert("服务器报错");
+            }
+        }); 
 	}
-
+	
+	//根据id删除用户
+	function delUser(id){
+		$.ajax({  
+            type : "POST",  
+            url : "${pageContext.request.contextPath}/user/delUser.do",  
+            data : {
+            	id:id
+            },
+            dataType : "json",  
+            success:function(msg) {  
+                alert(msg);
+            },
+            error:function(){
+            	alert("服务器报错");
+            }
+        }); 
+	}
+	//添加用户
+	function addUser() {
+		
+		var formObject = {};
+		var formArray = $("#addUserForm").serializeArray();
+		$.each(formArray, function(i, item) {
+			formObject[item.name] = item.value;
+		});
+		var formJson = JSON.stringify(formObject);
+		//alert(formJson);
+		$.ajax({  
+            type : "POST",  
+            url : "${pageContext.request.contextPath}/user/addUser.do",  
+            data : formJson,  
+            async:false, 
+            contentType : "application/json",  
+            dataType : "json",  
+            success:function(msg) {  
+				if(msg=="success"){
+					alert("添加成功！");
+				}else{
+					alert("添加失败。");
+				}
+            	$('#myModal').modal('hide');
+            },
+            error:function(){
+            	alert("服务器报错");
+            }
+        }); 
+		
+	}
+	//表格初始化
 	$('#table')
 			.bootstrapTable(
 					{
@@ -139,7 +211,7 @@
 						sidePagination : 'server',
 						pageNumber : 1, //初始化加载第一页，默认第一页
 						pageSize : 10, //每页的记录行数（*）
-						pageList : [ 10, 20, 30, 40 ],//分页步进值
+						pageList : [ 10, 20],//分页步进值
 						sortName : 'id',
 						striped : true,//是否显示行间隔色
 						cache : false,
@@ -162,10 +234,10 @@
 						columns : [
 								{
 									field : 'ck',
-									checkbox : true,
-									formatter : function(value, rows, index) {
+									checkbox : true
+									/* formatter : function(value, rows, index) {
 										return rows.id;
-									}
+									} */
 								},
 								{
 									field : 'id',
@@ -243,7 +315,7 @@
 									formatter : function(value, rows, index) {
 										var btn = '<button type="button" class="btn btn-primary" onclick="test('
 												+ rows.id
-												+ ')">编辑</button>&nbsp&nbsp<button type="button" class="btn btn-danger">删除</button>';
+												+ ')">编辑</button>&nbsp&nbsp<button type="button" class="btn btn-danger" onClick="delUser('+rows.id+')" >删除</button>';
 										if (rows.enabled == 'Y') {
 											btn += '&nbsp&nbsp<button type="button" class="btn btn-warning">禁用</button>'
 										} else if (rows.enabled == 'N') {
