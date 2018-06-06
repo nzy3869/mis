@@ -84,7 +84,6 @@ public class UserController {
 		if(result==0) {
 			return "error";
 		}
-		
 		return "success";
 	}
 	
@@ -100,17 +99,39 @@ public class UserController {
 		if(result==0) {
 			return "error";
 		}
-		
 		return "success";
 	}
+	/**
+	 * 批量删除用户
+	 * @param ids
+	 * @return
+	 */
 	@RequestMapping("/delMultUser")
 	@ResponseBody
 	public String delMultUser(@RequestBody int[] ids) {
-		
+		int result = 0;
 		for (int i : ids) {
-			System.out.println(i);
+			userService.delUser(i);
+			result ++;
 		}
-		return null;
+		if(result==0) {
+			return "error";
+		}
+		return "success";
 	}
 	
+	/**
+	 * 修改用户状态
+	 * @param user
+	 * @return
+	 */
+	@RequestMapping("/updateEnabled")
+	@ResponseBody
+	public String updateEnabled(@RequestBody User user) {
+		int result = userService.updateUser(user);
+		if(result==0) {
+			return "error";
+		}
+		return "success";
+	}
 }

@@ -123,8 +123,45 @@
 	</div>
 </body>
 <script type="text/javascript">
+	function areYouSure(){
+		var myMessage = confirm("你确定要执行此操作吗？");
+		if(myMessage){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	//修改启用状态
+	function updateEnabled(id,status){
+		/* $.get("${pageContext.request.contextPath}/user/updateEnabled.do?enabled='"+status+"'&id="+id+"",function(msg){
+			alert(msg);
+		}); */
+		if(areYouSure()){
+			var data = {
+					  id:id,
+					  enabled:status
+				  }
+			$.ajax({
+			  type: 'post',
+			  url: "${pageContext.request.contextPath}/user/updateEnabled.do",
+			  dataType: "json",
+			  contentType : "application/json",
+			  data:  JSON.stringify(data),
+			  success:  function(msg) {
+				alert(msg);
+			  },
+			  error:function(){
+				  alert("服务器出错！");
+			  }			 
+			});
+		}
+		 
+		
+	}
 	//批量删除用户
 	function delMultUsers(){
+		
 		var ids = [];
 		//获取选中的元素
 		var cks = $("#table").bootstrapTable('getSelections',function(rows){
@@ -134,70 +171,77 @@
 		for(j in cks) {
 			 ids.push(cks[j].id);
 		}
-		console.log(ids);
-		$.ajax({  
-            type : "POST",  
-            url : "${pageContext.request.contextPath}/user/delMultUser.do",  
-            data : {
-            	ids:JSON.stringify(ids), 
-            },
-            dataType : "json",  
-            success:function(msg) {  
-                alert(msg);
-            },
-            error:function(){
-            	alert("服务器报错");
-            }
-        }); 
+		if(!ids.length>0){
+			alert("请选择数据！");
+			return;
+		}
+		if(areYouSure()){
+			$.ajax({
+				type : 'POST',
+				url : "${pageContext.request.contextPath}/user/delMultUser.do",
+				data : JSON.stringify(ids),
+				contentType : "application/json",
+				dataType : "json",
+				success : function(msg) {
+					alert(msg);
+				},
+				error : function() {
+					alert("服务器报错");
+				}
+			});
+		}
+		
 	}
-	
+
 	//根据id删除用户
-	function delUser(id){
-		$.ajax({  
-            type : "POST",  
-            url : "${pageContext.request.contextPath}/user/delUser.do",  
-            data : {
-            	id:id
-            },
-            dataType : "json",  
-            success:function(msg) {  
-                alert(msg);
-            },
-            error:function(){
-            	alert("服务器报错");
-            }
-        }); 
+	function delUser(id) {
+		if(areYouSure()){
+			$.ajax({
+				type : "POST",
+				url : "${pageContext.request.contextPath}/user/delUser.do",
+				data : {
+					id : id
+				},
+				dataType : "json",
+				success : function(msg) {
+					alert(msg);
+				},
+				error : function() {
+					alert("服务器报错");
+				}
+			});
+		}
+		
 	}
 	//添加用户
 	function addUser() {
-		
+
 		var formObject = {};
 		var formArray = $("#addUserForm").serializeArray();
 		$.each(formArray, function(i, item) {
 			formObject[item.name] = item.value;
 		});
 		var formJson = JSON.stringify(formObject);
-		//alert(formJson);
-		$.ajax({  
-            type : "POST",  
-            url : "${pageContext.request.contextPath}/user/addUser.do",  
-            data : formJson,  
-            async:false, 
-            contentType : "application/json",  
-            dataType : "json",  
-            success:function(msg) {  
-				if(msg=="success"){
+		$.ajax({
+			type : "POST",
+			url : "${pageContext.request.contextPath}/user/addUser.do",
+			data : formJson,
+			async : false,
+			contentType : "application/json",
+			dataType : "json",
+			success : function(msg) {
+				if (msg == "success") {
 					alert("添加成功！");
-				}else{
+				} else {
 					alert("添加失败。");
 				}
-            	$('#myModal').modal('hide');
-            },
-            error:function(){
-            	alert("服务器报错");
-            }
-        }); 
-		
+				$('#myModal').modal('hide');
+			},
+			error : function() {
+				alert("服务器报错");
+			}
+		});
+
 	}
 	//表格初始化
 	$('#table')
@@ -211,7 +255,7 @@
 						sidePagination : 'server',
 						pageNumber : 1, //初始化加载第一页，默认第一页
 						pageSize : 10, //每页的记录行数（*）
-						pageList : [ 10, 20],//分页步进值
+						pageList : [ 10, 20 ],//分页步进值
 						sortName : 'id',
 						striped : true,//是否显示行间隔色
 						cache : false,
@@ -235,9 +279,9 @@
 								{
 									field : 'ck',
 									checkbox : true
-									/* formatter : function(value, rows, index) {
-										return rows.id;
-									} */
+								/* formatter : function(value, rows, index) {
+									return rows.id;
+								} */
 								},
 								{
 									field : 'id',
@@ -289,7 +333,7 @@
 										if (value == "Y") {
 											text = '有效';
 										} else if (value == 'N') {
-											text = '无效';
+											text = '禁用';
 										}
 										return text;
 									}
@@ -315,11 +359,12 @@
 									formatter : function(value, rows, index) {
 										var btn = '<button type="button" class="btn btn-primary" onclick="test('
 												+ rows.id
-												+ ')">编辑</button>&nbsp&nbsp<button type="button" class="btn btn-danger" onClick="delUser('+rows.id+')" >删除</button>';
+												+ ')">编辑</button>&nbsp&nbsp<button type="button" class="btn btn-danger" onClick="delUser('
+												+ rows.id + ')" >删除</button>';
 										if (rows.enabled == 'Y') {
-											btn += '&nbsp&nbsp<button type="button" class="btn btn-warning">禁用</button>'
+											btn += '&nbsp&nbsp<button type="button" class="btn btn-warning" onClick="updateEnabled('+rows.id+',\'N\')" >禁用</button>'
 										} else if (rows.enabled == 'N') {
-											btn += '&nbsp&nbsp<button type="button" class="btn btn-success">启用</button>'
+											btn += '&nbsp&nbsp<button type="button" class="btn btn-success" onClick="updateEnabled('+rows.id+',\'Y\')">启用</button>'
 										}
 										return btn;
 									}

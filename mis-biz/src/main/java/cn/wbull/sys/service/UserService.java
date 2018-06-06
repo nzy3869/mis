@@ -50,7 +50,7 @@ public interface UserService {
 	 * @param user
 	 * @return
 	 */
-	int updateUSer(User user);
+	int updateUser(User user);
 	/**
 	 * 根据uid或中文名(uname)查询
 	 * @param params
